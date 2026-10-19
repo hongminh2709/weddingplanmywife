@@ -15,7 +15,7 @@
 
   function buildLink(origin, guest) {
     var name = guest.trim();
-    if (!name) return new URL('/thiep', origin).href;
+    if (!name) return new URL('/', origin).href;
     var bytes = new TextEncoder().encode(name);
     var binary = Array.from(bytes, function (byte) { return String.fromCharCode(byte); }).join('');
     var code = btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');

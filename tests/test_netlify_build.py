@@ -1,3 +1,4 @@
+import os
 import subprocess
 import tempfile
 import unittest
@@ -8,7 +9,8 @@ class NetlifyBuildTest(unittest.TestCase):
     def test_build_contains_site_and_assets_without_private_mirror_files(self):
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / 'site'
-            subprocess.run(['bash', 'build.sh', str(output)], check=True)
+            env = {**os.environ, 'URL': 'https://example.netlify.app'}
+            subprocess.run(['bash', 'build.sh', str(output)], check=True, env=env)
             for path in (
                 'index.html',
                 'chungdoi.com/i/hongminh-khanhlinh.html',
@@ -22,6 +24,12 @@ class NetlifyBuildTest(unittest.TestCase):
                 self.assertTrue((output / path).is_file(), path)
             for path in ('cookies.txt', 'hts-cache', 'hts-log.txt', 'tests', 'supabase'):
                 self.assertFalse((output / path).exists(), path)
+            home = (output / 'index.html').read_text()
+            self.assertIn('THÔNG TIN TIỆC CƯỚI', home)
+            self.assertIn('initialEnvelopeOpen\\":true', home)
+            self.assertNotIn('data-landing-screenshot-id="invite-envelope"', home)
+            self.assertIn('content="https://example.netlify.app/cdn.chungdoi.com/uploads/4fc1d983-574d-41fa-8665-38e071d95976.jpg"', home)
+            self.assertIn('property="og:url" content="https://example.netlify.app/"', home)
 
 
 if __name__ == '__main__':

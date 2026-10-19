@@ -4,7 +4,7 @@ const vm = require('node:vm');
 const invitation = require('../local/personalized-invitation.js');
 
 const generic = invitation.buildLink('https://example.com', '');
-assert.equal(generic, 'https://example.com/thiep');
+assert.equal(generic, 'https://example.com/');
 
 const personal = invitation.buildLink('https://example.com', '  em Ánh & gia đình  ');
 assert.equal(invitation.guestFromUrl(personal), 'em Ánh & gia đình');
