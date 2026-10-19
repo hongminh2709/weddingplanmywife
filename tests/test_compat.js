@@ -1,0 +1,16 @@
+const assert = require('assert');
+const compat = require('../local/compat.js');
+assert.strictEqual(typeof compat.mapEmbedUrl, 'function', 'map URL conversion should be available');
+const map = new URL(compat.mapEmbedUrl('https://www.google.com/maps/embed/v1/place?key=restricted&q=Nh%C3%A0%20v%C4%83n%20ho%C3%A1'));
+assert.strictEqual(map.hostname, 'maps.google.com');
+assert.strictEqual(map.searchParams.get('q'), 'Nhà văn hoá');
+assert.strictEqual(map.searchParams.get('output'), 'embed');
+assert.strictEqual(map.searchParams.has('key'), false);
+const place = new URL(compat.mapEmbedUrl('https://www.google.com/maps/embed/v1/place?key=restricted&q=place_id%3Atest&center=21.2%2C105.8'));
+assert.strictEqual(place.searchParams.get('q'), '21.2,105.8');
+const address = new URL(compat.mapEmbedUrl('https://www.google.com/maps/embed/v1/place?key=restricted&q=place_id%3Atest', 'Nhà văn hoá'));
+assert.strictEqual(address.searchParams.get('q'), 'Nhà văn hoá');
+assert.strictEqual(compat.mapEmbedUrl('https://example.com/'), null);
+assert.strictEqual(compat.trackForUrl('https://api.chungdoi.com/api/music-tracks/romantic-013').track.url, 'https://cdn.chungdoi.com/music/le-duong.mp3');
+assert.strictEqual(compat.trackForUrl('https://api.chungdoi.com/api/music-tracks/other'), null);
+console.log('Compatibility checks passed');

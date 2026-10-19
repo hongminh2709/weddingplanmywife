@@ -1,0 +1,30 @@
+/* Hide the template navigation bar that the original site adds on mobile. */
+nav.fixed.bottom-0 {
+  display: none !important;
+}
+
+/* Hide the language suggestion and the floating support chat widget. */
+.bg-primary\/10.border-b.border-primary\/20,
+.jsx-5db65d816a97458c.fixed.bottom-40 {
+  display: none !important;
+}
+
+p[data-invite-guest]::after {
+  content: ' ' attr(data-invite-guest);
+}
+
+a.wedding-directions {
+  background: #6e1724 !important;
+  color: #fff8ed !important;
+  padding: 0.85rem 1.65rem;
+  border: 2px solid #8e3540;
+  box-shadow: 0 4px 12px rgba(75, 14, 25, 0.3);
+  text-decoration: none;
+}
+
+a.wedding-directions:hover,
+a.wedding-directions:focus-visible {
+  background: #8e2634 !important;
+  outline: 3px solid #d9a55f;
+  outline-offset: 3px;
+}

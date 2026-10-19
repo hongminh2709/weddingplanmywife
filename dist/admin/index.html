@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Tạo liên kết thiệp cưới</title>
+  <link rel="stylesheet" href="/local/admin.css">
+  <script defer src="/local/personalized-invitation.js"></script>
+  <script defer src="/local/admin.js"></script>
+</head>
+<body>
+  <main class="card">
+    <p class="eyebrow">HỒNG MINH &amp; KHÁNH LINH</p>
+    <h1>Tạo link thiệp mời</h1>
+    <p class="intro">Chọn lời mời và tạo đường dẫn để gửi đến khách.</p>
+    <form id="invite-form">
+      <fieldset>
+        <legend>Lời mời trên phong bì</legend>
+        <label class="option"><input type="radio" name="mode" value="generic" checked> <span>Thân Mời</span></label>
+        <label class="option"><input type="radio" name="mode" value="personal"> <span>Thân Mời kèm tên khách</span></label>
+      </fieldset>
+      <div id="guest-field" hidden>
+        <label for="guest">Tên hoặc cách xưng hô của khách</label>
+        <input id="guest" name="guest" type="text" placeholder="Ví dụ: em A, gia đình anh Minh" maxlength="120" autocomplete="off">
+        <p class="hint">Nhập đầy đủ cách xưng hô bạn muốn hiển thị sau “Thân Mời”.</p>
+      </div>
+      <button class="primary" type="submit">Tạo liên kết</button>
+    </form>
+    <section id="result" class="result" hidden aria-live="polite">
+      <p class="label">Lời mời</p>
+      <p id="preview" class="preview"></p>
+      <label for="link">Đường dẫn thiệp</label>
+      <input id="link" readonly>
+      <div class="actions">
+        <button id="copy" class="primary" type="button">Sao chép liên kết</button>
+        <a id="open" class="secondary" target="_blank" rel="noopener noreferrer">Xem thiệp</a>
+      </div>
+      <p id="copy-message" class="hint" role="status"></p>
+    </section>
+  </main>
+</body>
+</html>

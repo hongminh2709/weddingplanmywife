@@ -1,0 +1,23 @@
+:root { color-scheme: light; font-family: Georgia, 'Times New Roman', serif; color: #511419; background: #f5eee6; }
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 28px 16px; background: radial-gradient(circle at top, #fffaf5, #efe2d5); }
+.card { width: min(100%, 560px); padding: clamp(24px, 6vw, 46px); background: #fffaf5; border: 1px solid #dfc5b4; border-radius: 18px; box-shadow: 0 18px 60px #5114191a; }
+.eyebrow { font: 600 11px/1.5 Arial, sans-serif; letter-spacing: .2em; text-align: center; color: #99625c; }
+h1 { margin: 12px 0; text-align: center; font-size: clamp(30px, 7vw, 40px); font-weight: normal; }
+.intro { color: #886460; text-align: center; line-height: 1.5; margin-bottom: 30px; }
+fieldset { border: 0; padding: 0; margin: 0 0 22px; }
+legend, label, .label { font: 600 14px/1.4 Arial, sans-serif; }
+legend { margin-bottom: 12px; }
+.option { display: flex; align-items: center; gap: 10px; padding: 13px 15px; border: 1px solid #e4d1c7; border-radius: 9px; margin-bottom: 9px; font-weight: 400; cursor: pointer; }
+input[type=radio] { accent-color: #681a27; }
+input[type=text], input[readonly] { width: 100%; padding: 13px; border: 1px solid #d8beb1; border-radius: 8px; margin-top: 8px; background: white; color: #511419; font: 15px Arial, sans-serif; }
+input:focus-visible, button:focus-visible, a:focus-visible { outline: 3px solid #c4976a; outline-offset: 2px; }
+.hint { font: 13px/1.5 Arial, sans-serif; color: #896e69; }
+button, .secondary { display: inline-flex; align-items: center; justify-content: center; min-height: 46px; padding: 11px 20px; border-radius: 999px; font: 600 14px Arial, sans-serif; cursor: pointer; text-decoration: none; }
+.primary { background: #601824; color: #fffaf5; border: 1px solid #601824; }
+form > .primary { width: 100%; margin-top: 6px; }
+.secondary { color: #601824; border: 1px solid #b99184; }
+.result { margin-top: 28px; padding-top: 20px; border-top: 1px solid #eadbd3; }
+.preview { font-size: 23px; margin: 8px 0 20px; overflow-wrap: anywhere; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+[hidden] { display: none !important; }

@@ -1,0 +1,32 @@
+import assert from 'node:assert/strict';
+import guestbook from '../netlify/functions/guestbook.mjs';
+
+const request = (method, body) => new Request('https://example.com/.netlify/functions/guestbook', { method, ...(body ? { body: JSON.stringify(body) } : {}) });
+delete process.env.SUPABASE_URL;
+delete process.env.SUPABASE_PUBLISHABLE_KEY;
+assert.equal((await guestbook(request('GET'))).status, 503);
+process.env.SUPABASE_URL = 'https://example.supabase.co';
+process.env.SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_test';
+const calls = [];
+globalThis.fetch = async (url, options) => {
+  calls.push({ url, options });
+  return options.method === 'POST' ? new Response(null, { status: 201 }) : Response.json([{ name: 'An', message: 'Mừng cưới!' }]);
+};
+let response = await guestbook(request('GET'));
+assert.equal((await response.json()).comments[0].name, 'An');
+assert.equal(calls[0].options.headers.apikey, 'sb_publishable_test');
+response = await guestbook(request('POST', { name: ' An ', message: ' Mừng cưới! ', ignored: 'x' }));
+assert.equal(response.status, 200);
+assert.deepEqual(JSON.parse(calls[1].options.body), { name: 'An', message: 'Mừng cưới!' });
+assert.equal((await guestbook(request('POST', { name: ' ', message: 'x' }))).status, 400);
+assert.equal((await guestbook(request('DELETE'))).status, 405);
+assert.equal((await guestbook(request('POST', { name: 'An', message: 'x'.repeat(2001) }))).status, 400);
+process.env.SUPABASE_PUBLISHABLE_KEY = 'sb_secret_do_not_use';
+assert.equal((await guestbook(request('GET'))).status, 503);
+assert.equal(calls.length, 2);
+process.env.SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_test';
+globalThis.fetch = async () => new Response('internal detail', { status: 403 });
+response = await guestbook(request('GET'));
+assert.equal(response.status, 502);
+assert.equal((await response.text()).includes('internal detail'), false);
+console.log('Guestbook function checks passed');
