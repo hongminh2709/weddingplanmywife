@@ -4,13 +4,15 @@ const vm = require('node:vm');
 const invitation = require('../local/personalized-invitation.js');
 
 const generic = invitation.buildLink('https://example.com', '');
-assert.equal(generic, 'https://example.com/chungdoi.com/i/hongminh-khanhlinh.html');
+assert.equal(generic, 'https://example.com/thiep');
 
 const personal = invitation.buildLink('https://example.com', '  em Ánh & gia đình  ');
 assert.equal(invitation.guestFromUrl(personal), 'em Ánh & gia đình');
+assert.match(new URL(personal).pathname, /^\/m\/[A-Za-z0-9_-]+$/);
 assert.equal(invitation.guestFromUrl(generic), '');
 assert.equal(invitation.guestFromUrl('https://example.com/?guest=%20%20'), '');
 assert.equal(invitation.guestFromUrl('https://example.com/?guest=%3Cscript%3E'), '<script>');
+assert.equal(invitation.guestFromUrl('https://example.com/m/_w'), '');
 const opened = new URL(invitation.openedLink('https://example.com/chungdoi.com/i/hongminh-khanhlinh.html?guest=An&open=1&_r=123'));
 assert.equal(opened.pathname, '/chungdoi.com/i/hongminh-khanhlinhbaf7.html');
 assert.equal(opened.searchParams.get('guest'), 'An');

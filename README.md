@@ -13,4 +13,4 @@ Nếu có lựa chọn scope, chọn **Functions** (hoặc All scopes). Tạo de
 
 Có thể điền các giá trị vào `.env` (tạo từ `.env.example` nếu chưa có), rồi nhập cả file trong Netlify qua **Add a variable → Import from a .env file** hoặc chạy `netlify env:import .env`. Không commit `.env`; file này đã được thêm vào `.gitignore`.
 
-Truy cập `/admin` để tạo liên kết thiệp chung hoặc liên kết có tên khách mời. Tên khách được lưu trong chính đường dẫn, không lưu vào database; bất kỳ ai có đường dẫn đều có thể xem tên. Trang `/admin` hiện không yêu cầu đăng nhập và chỉ dùng để tạo liên kết.
+Truy cập `/admin` để tạo liên kết thiệp chung hoặc liên kết có tên khách mời. Liên kết mới dùng đường dẫn `/thiep` hoặc `/m/...`; Netlify Function tạo phần xem trước có ảnh và lời mời rồi đưa khách tới thiệp. Cần chạy `netlify dev` hoặc triển khai lên Netlify để thử các liên kết này; HTTP server tĩnh không chạy Function. Tên khách được mã hóa trong đường dẫn, không lưu vào database và không được bảo mật; bất kỳ ai có đường dẫn đều có thể xem tên. Các liên kết cũ dùng tham số `guest` vẫn hoạt động. Trang `/admin` hiện không yêu cầu đăng nhập và chỉ dùng để tạo liên kết.
