@@ -24,9 +24,11 @@
 
   function openedLink(value) {
     var url = new URL(value);
+    var genericHome = url.pathname === '/' && !guestFromUrl(value);
     url.pathname = '/chungdoi.com/i/hongminh-khanhlinhbaf7.html';
     url.searchParams.delete('open');
     url.searchParams.delete('_r');
+    if (genericHome) url.searchParams.set('_home', '1');
     url.hash = '';
     return url.href;
   }
@@ -37,6 +39,12 @@
     return;
   }
   root.personalizedInvitation = api;
+
+  var current = new URL(root.location.href);
+  if (current.pathname === '/chungdoi.com/i/hongminh-khanhlinhbaf7.html' &&
+      current.searchParams.get('_home') === '1' && !current.searchParams.has('guest')) {
+    root.history.replaceState(root.history.state, '', '/');
+  }
 
   document.addEventListener('click', function (event) {
     var anchor = event.target.closest('[data-landing-screenshot-id="invite-envelope"] a');

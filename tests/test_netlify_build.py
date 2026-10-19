@@ -26,8 +26,8 @@ class NetlifyBuildTest(unittest.TestCase):
                 self.assertFalse((output / path).exists(), path)
             home = (output / 'index.html').read_text()
             self.assertIn('THÔNG TIN TIỆC CƯỚI', home)
-            self.assertIn('initialEnvelopeOpen\\":true', home)
-            self.assertNotIn('data-landing-screenshot-id="invite-envelope"', home)
+            self.assertIn('initialEnvelopeOpen\\":false', home)
+            self.assertIn('data-landing-screenshot-id="invite-envelope"', home)
             self.assertIn('content="https://example.netlify.app/cdn.chungdoi.com/uploads/4fc1d983-574d-41fa-8665-38e071d95976.jpg"', home)
             self.assertIn('property="og:url" content="https://example.netlify.app/"', home)
 

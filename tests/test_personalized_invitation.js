@@ -33,6 +33,14 @@ vm.runInNewContext(fs.readFileSync('local/personalized-invitation.js', 'utf8'), 
 const anchor = {};
 let stopped = false;
 handleClick({ target: { closest: () => anchor }, stopPropagation: () => { stopped = true; } });
-assert.equal(anchor.href, 'https://example.com/chungdoi.com/i/hongminh-khanhlinhbaf7.html');
+assert.equal(anchor.href, 'https://example.com/chungdoi.com/i/hongminh-khanhlinhbaf7.html?_home=1');
 assert.equal(stopped, true);
+let cleanedPath;
+vm.runInNewContext(fs.readFileSync('local/personalized-invitation.js', 'utf8'), {
+  URL, document, window: {
+    location: { href: anchor.href },
+    history: { state: null, replaceState: (state, title, path) => { cleanedPath = path; } },
+  },
+});
+assert.equal(cleanedPath, '/');
 console.log('Personalized invitation link checks passed');

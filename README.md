@@ -2,7 +2,7 @@
 
 Đây là bản sao tĩnh của website, không cần cài đặt package. Kết nối repository với Netlify; cấu hình trong `netlify.toml` sẽ chạy `bash build.sh` và xuất bản thư mục `dist`.
 
-Có thể chạy `bash build.sh` ở máy để tạo bản triển khai và dùng một máy chủ HTTP tĩnh để xem thư mục `dist` (ví dụ `python3 -m http.server --directory dist`). Trang gốc hiển thị trực tiếp thiệp chung đã mở.
+Có thể chạy `bash build.sh` ở máy để tạo bản triển khai và dùng một máy chủ HTTP tĩnh để xem thư mục `dist` (ví dụ `python3 -m http.server --directory dist`). Trang gốc hiển thị phong bì của thiệp chung trước khi khách mở thiệp.
 
 Sổ lưu bút sử dụng Netlify Function để truy cập Supabase. Trong Netlify, mở **Project configuration → Environment variables** và thêm:
 

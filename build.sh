@@ -8,7 +8,7 @@ mkdir -p "$output"
 # used by the saved invitation page, without relying on symlink deployment.
 cp backblue.gif fade.gif "$output/"
 cp -R chungdoi.com cdn.chungdoi.com local "$output/"
-cp chungdoi.com/i/hongminh-khanhlinhbaf7.html "$output/index.html"
+cp chungdoi.com/i/hongminh-khanhlinh.html "$output/index.html"
 # Use Netlify's public site URL for share previews, while keeping image loads local.
 if [[ "${URL:-}" =~ ^https?://[a-zA-Z0-9.-]+(:[0-9]+)?/?$ ]]; then
   site_origin="${URL%/}"
