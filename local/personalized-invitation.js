@@ -12,12 +12,29 @@
     return url.href;
   }
 
-  var api = { guestFromUrl: guestFromUrl, buildLink: buildLink };
+  function openedLink(value) {
+    var url = new URL(value);
+    url.pathname = '/chungdoi.com/i/hongminh-khanhlinhbaf7.html';
+    url.searchParams.delete('open');
+    url.searchParams.delete('_r');
+    url.hash = '';
+    return url.href;
+  }
+
+  var api = { guestFromUrl: guestFromUrl, buildLink: buildLink, openedLink: openedLink };
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = api;
     return;
   }
   root.personalizedInvitation = api;
+
+  document.addEventListener('click', function (event) {
+    var anchor = event.target.closest('[data-landing-screenshot-id="invite-envelope"] a');
+    if (!anchor) return;
+    anchor.href = openedLink(root.location.href);
+    // Let the browser follow the link, without the original animation handler.
+    event.stopPropagation();
+  }, true);
 
   var guest = guestFromUrl(root.location.href);
   if (!guest) return;
