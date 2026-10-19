@@ -1,4 +1,35 @@
-export const config = { path: ['/thiep', '/m/:code'] };
+export const config = { path: ['/thiep', '/m/:code', '/api/invitations'] };
+
+function supabaseConfig() {
+  const key = (process.env.SUPABASE_PUBLISHABLE_KEY || '').trim();
+  let publicKey = key.startsWith('sb_publishable_');
+  if (!publicKey) {
+    try { publicKey = JSON.parse(Buffer.from(key.split('.')[1], 'base64url')).role === 'anon'; } catch {}
+  }
+  try {
+    const url = new URL(process.env.SUPABASE_URL);
+    if (!publicKey || url.protocol !== 'https:' || url.username || url.password || url.pathname !== '/' || url.search || url.hash) return null;
+    return { url, key };
+  } catch { return null; }
+}
+
+async function rpc(name, args) {
+  const config = supabaseConfig();
+  if (!config) return { error: 503 };
+  try {
+    const response = await fetch(new URL('/rest/v1/rpc/' + name, config.url), {
+      method: 'POST', redirect: 'error',
+      headers: { apikey: config.key, 'Content-Type': 'application/json' },
+      body: JSON.stringify(args),
+    });
+    if (!response.ok) return { error: 502 };
+    return { value: await response.json() };
+  } catch { return { error: 502 }; }
+}
+
+function jsonError(message, status) {
+  return Response.json({ error: message }, { status, headers: { 'Cache-Control': 'no-store' } });
+}
 
 function escapeHtml(value) {
   return value.replace(/[&<>"']/g, character => ({
@@ -20,8 +51,30 @@ function guestFromCode(code) {
 
 export default async function invitation(request) {
   const url = new URL(request.url);
+  if (url.pathname === '/api/invitations') {
+    if (request.method !== 'POST') return jsonError('Phương thức không được hỗ trợ.', 405);
+    let body;
+    try {
+      const text = await request.text();
+      if (text.length > 4000) throw new Error();
+      body = JSON.parse(text);
+    } catch { return jsonError('Dữ liệu không hợp lệ.', 400); }
+    const guest = typeof body?.guest === 'string' ? body.guest.trim() : '';
+    if (!guest || Array.from(guest).length > 120) return jsonError('Tên khách mời không hợp lệ.', 400);
+    const result = await rpc('create_invitation_link', { guest });
+    if (result.error || !/^s_[a-f0-9]{16}$/.test(result.value)) return jsonError('Không thể tạo liên kết. Vui lòng kiểm tra cấu hình Supabase và bảng liên kết thiệp.', result.error || 502);
+    return Response.json({ code: result.value }, { headers: { 'Cache-Control': 'no-store' } });
+  }
+  if (request.method !== 'GET' && request.method !== 'HEAD') return new Response('Phương thức không được hỗ trợ.', { status: 405 });
   const match = url.pathname.match(/^\/m\/([^/]+)\/?$/);
-  const guest = match ? guestFromCode(match[1]) : '';
+  let guest = '';
+  if (match && /^s_[a-f0-9]{16}$/.test(match[1])) {
+    const result = await rpc('get_invitation_guest', { link_code: match[1] });
+    if (result.error) return new Response('Không thể tải thiệp mời. Vui lòng thử lại sau.', { status: result.error });
+    guest = result.value;
+  } else if (match) {
+    guest = guestFromCode(match[1]);
+  }
   if (match && guest === null) return new Response('Không tìm thấy thiệp mời.', { status: 404 });
 
   const title = 'Khánh Linh & Hồng Minh';
