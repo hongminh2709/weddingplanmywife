@@ -3,14 +3,16 @@
 
   function guestFromUrl(value) {
     var url = new URL(value);
-    var encoded = url.pathname.match(/^\/m\/([A-Za-z0-9_-]+)\/?$/);
-    if (encoded) {
-      try {
-        var binary = atob(encoded[1].replace(/-/g, '+').replace(/_/g, '/'));
-        return new TextDecoder('utf-8', { fatal: true }).decode(Uint8Array.from(binary, function (c) { return c.charCodeAt(0); })).trim();
-      } catch (_) { return ''; }
-    }
-    return (url.searchParams.get('guest') || '').trim();
+    var legacy = url.searchParams.get('guest');
+    if (legacy !== null) return legacy.trim();
+    var match = url.pathname.match(/^\/m\/([A-Za-z0-9_-]+)\/?$/);
+    if (!match) return '';
+    try {
+      var encoded = match[1].replace(/-/g, '+').replace(/_/g, '/');
+      var binary = atob(encoded);
+      var bytes = Uint8Array.from(binary, function (character) { return character.charCodeAt(0); });
+      return new TextDecoder('utf-8', { fatal: true }).decode(bytes).trim();
+    } catch (_) { return ''; }
   }
 
   function buildLink(origin, guest) {
@@ -22,44 +24,28 @@
     return new URL('/m/' + code, origin).href;
   }
 
-  function openedLink(value) {
+  function openFallbackUrl(value) {
     var url = new URL(value);
-    var genericHome = url.pathname === '/' && !guestFromUrl(value);
-    url.pathname = '/chungdoi.com/i/hongminh-khanhlinhbaf7.html';
-    url.searchParams.delete('open');
-    url.searchParams.delete('_r');
-    if (genericHome) url.searchParams.set('_home', '1');
-    url.hash = '';
+    url.searchParams.set('open', '1');
     return url.href;
   }
 
-  var api = { guestFromUrl: guestFromUrl, buildLink: buildLink, openedLink: openedLink };
+  var api = { guestFromUrl: guestFromUrl, buildLink: buildLink, openFallbackUrl: openFallbackUrl };
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = api;
     return;
   }
   root.personalizedInvitation = api;
 
-  var current = new URL(root.location.href);
-  if (current.pathname === '/chungdoi.com/i/hongminh-khanhlinhbaf7.html' &&
-      current.searchParams.get('_home') === '1' && !current.searchParams.has('guest')) {
-    root.history.replaceState(root.history.state, '', '/');
-  }
-
-  document.addEventListener('click', function (event) {
-    var anchor = event.target.closest('[data-landing-screenshot-id="invite-envelope"] a');
-    if (!anchor) return;
-    anchor.href = openedLink(root.location.href);
-    // Let the browser follow the link, without the original animation handler.
-    event.stopPropagation();
-  }, true);
-
   var guest = guestFromUrl(root.location.href);
-  if (!guest) return;
 
   function updateEnvelope() {
     var envelope = document.querySelector('[data-landing-screenshot-id="invite-envelope"]');
     if (!envelope) return;
+    var openLink = envelope.querySelector('a[href]');
+    var fallback = openFallbackUrl(root.location.href);
+    if (openLink && openLink.href !== fallback) openLink.href = fallback;
+    if (!guest) return;
     envelope.querySelectorAll('p').forEach(function (paragraph) {
       var label = paragraph.querySelector('span');
       if (label && label.textContent.trim().toLocaleLowerCase('vi') === 'thân mời' &&

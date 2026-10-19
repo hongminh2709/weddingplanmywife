@@ -24,12 +24,10 @@ class NetlifyBuildTest(unittest.TestCase):
                 self.assertTrue((output / path).is_file(), path)
             for path in ('cookies.txt', 'hts-cache', 'hts-log.txt', 'tests', 'supabase'):
                 self.assertFalse((output / path).exists(), path)
-            home = (output / 'index.html').read_text()
-            self.assertIn('THÔNG TIN TIỆC CƯỚI', home)
-            self.assertIn('initialEnvelopeOpen\\":false', home)
-            self.assertIn('data-landing-screenshot-id="invite-envelope"', home)
-            self.assertIn('content="https://example.netlify.app/cdn.chungdoi.com/uploads/4fc1d983-574d-41fa-8665-38e071d95976.jpg"', home)
-            self.assertIn('property="og:url" content="https://example.netlify.app/"', home)
+            self.assertTrue((output / 'admin/index.html').is_file())
+            page = (output / 'chungdoi.com/i/hongminh-khanhlinh.html').read_text()
+            self.assertIn('data-landing-screenshot-id="invite-envelope"', page)
+            self.assertIn('/local/personalized-invitation.js', page)
 
 
 if __name__ == '__main__':

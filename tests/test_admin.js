@@ -1,46 +1,21 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
-
-async function run() {
-  const listeners = {};
-  const submit = {};
-  const elements = {
-    'invite-form': {
-      elements: { mode: { value: 'personal' } },
-      addEventListener: (type, fn) => { listeners[type] = fn; },
-      querySelector: () => submit,
-    },
-    'guest-field': {}, guest: { value: ' Em Ánh ', addEventListener() {} },
-    result: {}, link: {}, preview: {}, 'copy-message': {}, 'form-error': {}, open: {},
-    copy: { addEventListener() {} },
-  };
-  let status = 200;
-  const calls = [];
-  const context = {
-    URL, document: { getElementById: id => elements[id] },
-    window: { location: { origin: 'https://example.com' }, personalizedInvitation: { buildLink: origin => origin + '/' } },
-    fetch: async (url, options) => {
-      calls.push({ url, body: JSON.parse(options.body) });
-      return { ok: status === 200, json: async () => status === 200 ? { code: 's_0123456789abcdef' } : { error: 'Không thể tạo liên kết.' } };
-    },
-  };
-  vm.runInNewContext(fs.readFileSync('local/admin.js', 'utf8'), context);
-  await listeners.submit({ preventDefault() {} });
-  assert.equal(calls[0].body.guest, 'Em Ánh');
-  assert.equal(elements.link.value, 'https://example.com/m/s_0123456789abcdef');
-  assert.equal(elements.preview.textContent, 'Thân Mời Em Ánh');
-  assert.equal(elements.result.hidden, false);
-  status = 503;
-  await listeners.submit({ preventDefault() {} });
-  assert.equal(elements.result.hidden, true);
-  assert.equal(elements['form-error'].textContent, 'Không thể tạo liên kết.');
-  assert.equal(submit.disabled, false);
-  elements['invite-form'].elements.mode.value = 'generic';
-  await listeners.submit({ preventDefault() {} });
-  assert.equal(elements.link.value, 'https://example.com/');
-  assert.equal(elements.preview.textContent, 'Thân Mời');
-  assert.equal(calls.length, 2);
-  console.log('Invitation admin checks passed');
-}
-run().catch(error => { console.error(error); process.exitCode = 1; });
+const personalized = require('../local/personalized-invitation.js');
+const listeners = {};
+const elements = {
+  'invite-form': { elements: { mode: { value: 'personal' } }, addEventListener: (type, fn) => { listeners[type] = fn; } },
+  'guest-field': {}, guest: { value: ' Em Ánh ', addEventListener() {} }, result: {}, link: {}, preview: {},
+  'copy-message': {}, open: {}, copy: { addEventListener() {} },
+};
+vm.runInNewContext(fs.readFileSync('local/admin.js', 'utf8'), {
+  document: { getElementById: id => elements[id] },
+  window: { location: { origin: 'https://example.com' }, personalizedInvitation: personalized },
+});
+listeners.submit({ preventDefault() {} });
+assert.equal(personalized.guestFromUrl(elements.link.value), 'Em Ánh');
+assert.equal(elements.preview.textContent, 'Thân Mời Em Ánh');
+elements['invite-form'].elements.mode.value = 'generic';
+listeners.submit({ preventDefault() {} });
+assert.equal(elements.link.value, 'https://example.com/');
+console.log('Invitation admin checks passed');

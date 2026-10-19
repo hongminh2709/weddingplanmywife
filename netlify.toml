@@ -5,3 +5,6 @@
 [functions]
   directory = "netlify/functions"
 
+
+[functions.invitation]
+  included_files = ["chungdoi.com/i/hongminh-khanhlinh.html"]
