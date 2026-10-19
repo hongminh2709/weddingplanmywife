@@ -4,3 +4,9 @@
 
 [functions]
   directory = "netlify/functions"
+
+[[redirects]]
+  from = "/"
+  to = "/chungdoi.com/i/hongminh-khanhlinh.html"
+  status = 302
+  force = true
