@@ -55,6 +55,41 @@
     });
   }
 
-  new MutationObserver(updateEnvelope).observe(document.documentElement, { childList: true, subtree: true });
+  function keepFamilyInformationCompact() {
+    var familyGrid = document.querySelector('div.grid-cols-[1fr_auto_1fr]');
+    if (!familyGrid) return;
+
+    familyGrid.querySelectorAll('span').forEach(function (element) {
+      var name = element.textContent.trim();
+      if (name === 'Nguyễn Văn Thành' || name === 'Nguyễn Thị Kim Loan' ||
+          name === 'Lê Hồng Dương' || name === 'Lê Thị Thu Hiền') {
+        element.style.whiteSpace = 'nowrap';
+        element.style.fontSize = '14px';
+      }
+    });
+  }
+
+  function formatReceptionAddress() {
+    if (!document.body) return;
+
+    var oldAddress = 'Nhà hàng Vũ Nghĩa / Quốc Lộ 3 - Sóc Sơn - Hà Nội';
+    var newAddress = 'Nhà hàng Vũ Nghĩa\nQuốc Lộ 3 - Sóc Sơn - Hà Nội';
+    var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    var node;
+
+    while ((node = walker.nextNode())) {
+      if (node.nodeValue.indexOf(oldAddress) === -1) continue;
+      node.nodeValue = node.nodeValue.replace(oldAddress, newAddress);
+      if (node.parentElement) node.parentElement.style.whiteSpace = 'pre-line';
+    }
+  }
+
+  new MutationObserver(function () {
+    updateEnvelope();
+    keepFamilyInformationCompact();
+    formatReceptionAddress();
+  }).observe(document.documentElement, { childList: true, subtree: true });
   updateEnvelope();
+  keepFamilyInformationCompact();
+  formatReceptionAddress();
 })(typeof window === 'undefined' ? globalThis : window);

@@ -11,15 +11,18 @@ nav.fixed.bottom-0 {
 
 /* Keep both sides of the family legible on the invitation. */
 div.grid-cols-\[1fr_auto_1fr\] {
-  column-gap: clamp(0.75rem, 4vw, 2rem);
+  column-gap: clamp(0.25rem, 1.5vw, 0.65rem);
 }
 
 div.grid-cols-\[1fr_auto_1fr\] > div.grid > span {
-  font-size: 15px !important;
+  font-size: 14px !important;
+  white-space: nowrap;
 }
 
 div.grid-cols-\[1fr_auto_1fr\] > div.grid > div {
-  font-size: 13px !important;
+  font-size: 11px !important;
+  line-height: 1.4 !important;
+  white-space: pre-line;
 }
 
 /* Keep each time and day together in one highlighted frame. */
